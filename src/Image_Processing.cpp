@@ -39,7 +39,7 @@ BYTE* ImageProcessing::binarize(BYTE* img, int w, int h, int threshold = GRAY)
 	BYTE* result = new BYTE[w * h];
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
-			int value = img[y * w + x] > threshold ? 255 : 0;
+            result[y * w + x] = img[y * w + x] > threshold ? 255 : 0;
 	return result;
 }	
 
@@ -143,11 +143,10 @@ BYTE* ImageProcessing::changeLuminosityImage(BYTE* img, int w, int h, int Bright
 			{
 				temp_value = WHITE;
 			}
-			else if (temp_value < 0)
+            else if (temp_value < BLACK)
 			{
-				temp_value = 0;
+                temp_value = BLACK;
 			}
-			else { ; /* do nothing */ }
 
 			result[y * w + x] = (uint8_t)temp_value;
 		}

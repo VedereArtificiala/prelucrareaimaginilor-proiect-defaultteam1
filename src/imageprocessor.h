@@ -27,6 +27,24 @@ class ImageProcessor : public QObject {
                NOTIFY binarizationEnabledChanged
                )
 
+    Q_PROPERTY(int brightnessValue
+               MEMBER m_brightnessValue
+               READ brightnessValue
+               WRITE setBrightnessValue
+               NOTIFY brightnessValueChanged)
+
+    Q_PROPERTY(bool brightnessEnabled
+               MEMBER m_brightnessEnabled
+               READ brightnessEnabled
+               WRITE setBrightnessEnabled
+               NOTIFY brightnessEnabledChanged)
+
+    Q_PROPERTY(bool outlineEdgesEnabled
+               MEMBER m_outlineEdgesEnabled
+               READ outlineEdgesEnabled
+               WRITE setOutlineEdgesEnabled
+               NOTIFY outlineEdgesEnabledChanged)
+
 public:
     explicit ImageProcessor(QObject *parent = nullptr);
     ~ImageProcessor();
@@ -41,6 +59,15 @@ public:
     bool binarizationEnable() const;
     void setBinarizationEnabled(bool newBinarizationEnabled);
 
+    int brightnessValue() const;
+    void setBrightnessValue(int newBrightnessValue);
+
+    bool brightnessEnabled() const;
+    void setBrightnessEnabled(bool newBrightnessEnabled);
+
+    bool outlineEdgesEnabled() const;
+    void setOutlineEdgesEnabled(bool newOutlineEdgesEnabled);
+
 signals:
     void providerChanged();
 
@@ -48,10 +75,19 @@ signals:
 
     void binarizationEnabledChanged();
 
+    void brightnessValueChanged();
+
+    void brightnessEnabledChanged();
+
+    void outlineEdgesEnabledChanged();
+
 private:
     ImageProvider *m_provider = nullptr;
-    int m_binarizationThreshold = 0;
+    int m_binarizationThreshold = 128;
     bool m_binarizationEnabled = false;
+    int m_brightnessValue = 0;
+    bool m_brightnessEnabled = false;
+    bool m_outlineEdgesEnabled = false;
 };
 
 #endif // IMAGEPROCESSOR_H

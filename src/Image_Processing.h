@@ -39,7 +39,7 @@ struct Pixel {
 //Function prototypes 
 //====================================================================================================
 
-BYTE*		binarize(const BYTE* img, int w, int h, BYTE* img_dest, int threshold);
+BYTE*		binarize(const BYTE* img, int w, int h, BYTE*& img_dest, int threshold);
 
 BYTE*		binarize_window(const BYTE* img, int w, int h, BYTE* img_dest = NULL, BYTE threshold_LEFT = BLACK, BYTE threshold_RIGHT = WHITE, bool MakeIntervalBlack = true);
 
@@ -49,7 +49,7 @@ BYTE*		changeContrastImage(const BYTE* img, int w, int h, BYTE* img_dest = NULL,
 								int threshold_left=0, int threshold_right=255, 
 								float amp_left=128, float amp_right=128);
 
-BYTE*		changeLuminosityImage(const BYTE* img, int w, int h, BYTE* img_dest = NULL, int Brightness = 128);
+BYTE*		changeLuminosityImage(const BYTE* img, int w, int h, BYTE*& img_dest, int Brightness = 128);
 
 BYTE*		NoiseReduction(const BYTE* img, int w, int h, BYTE* img_dest = NULL, unsigned int Mode = MODE_ARITMETIC, unsigned short Filter_Size_X = filterHeight_1, unsigned short Filter_Size_Y = filterHeight_1);
 

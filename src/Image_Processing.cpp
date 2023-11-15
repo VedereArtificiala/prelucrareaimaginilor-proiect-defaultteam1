@@ -8,7 +8,7 @@ using namespace ImageProcessing;
  * This function recieves an array of values from an image, the width and the height of the image and a threshold
  * to compare the values to. If the value is greater than the threshold, the value is set to 255, otherwise it is set to 0.
  ========================================================================================================================*/
-BYTE* ImageProcessing::binarize(const BYTE* img, int w, int h, BYTE* img_dest = NULL, int threshold = GRAY)
+BYTE* ImageProcessing::binarize(const BYTE* img, int w, int h, BYTE*& img_dest, int threshold = GRAY)
 {
 	if(img_dest == NULL)
 		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
@@ -57,7 +57,7 @@ BYTE* ImageProcessing::blur(const BYTE* img, int w, int h, BYTE* img_dest) //TOD
 * the brightness of the image.
 * RETURNS: An array of updated values of the pixels
 ========================================================================================================================*/
-BYTE* ImageProcessing::changeLuminosityImage(const BYTE* img, int w, int h, BYTE* img_dest, int Brightness)
+BYTE* ImageProcessing::changeLuminosityImage(const BYTE* img, int w, int h, BYTE*& img_dest, int Brightness)
 {
 	if(img_dest == NULL)
 		img_dest = new BYTE[w * h]; //If there is no image destination, create one.

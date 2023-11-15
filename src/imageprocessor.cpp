@@ -3,7 +3,7 @@
 #include "Image_Processing.h"
 
 ImageProcessor::ImageProcessor(QObject *parent): QObject{parent} {
-    m_provider = new ImageProvider("/Users/tudor/Nextcloud/Facultate_An3_Sem1/Prelucrarea_Imaginilor/PIApp/Images/lena512.bmp");
+    m_provider = new ImageProvider("/Users/tudor/Desktop/testcellsegm.jpg");
 }
 
 ImageProcessor::~ImageProcessor() {
@@ -18,15 +18,34 @@ void ImageProcessor::processImage() {
     int w = m_provider->originalImage().width();
     int h = m_provider->originalImage().height();
 
-    uint8_t *image = Tools::readImageGray8(m_provider->originalImage());
+    uint8_t *src = NULL;
+    uint8_t *dest = NULL;
 
-    uint8_t *binarized = ImageProcessing::binarize(image, w, h, m_binarizationThreshold);
+    src = Tools::readImageGray8(m_provider->originalImage());
 
-    QImage finalImage = Tools::imageGray8FromArray(binarized, w, h);
+    if ( m_binarizationEnabled ) {
+        ImageProcessing::binarize(src, w, h, dest, m_binarizationThreshold);
+        swap(src, dest);
+    }
+
+    if ( m_brightnessEnabled ) {
+        ImageProcessing::changeLuminosityImage(src, w, h, dest, m_brightnessValue);
+        swap(src, dest);
+    }
+
+    if ( m_outlineEdgesEnabled ) {
+        ImageProcessing::sobelOutline(src, w, h, dest);
+        swap(src, dest);
+    }
+
+    QImage finalImage = Tools::imageGray8FromArray(src, w, h);
     m_provider->setFinalImage(finalImage);
 
-    delete[] binarized;
-    delete[] image;
+    if ( src )
+        delete[] src;
+
+    if ( dest )
+        delete[] dest;
 }
 
 int ImageProcessor::binarizationThreshold() const {
@@ -51,4 +70,40 @@ void ImageProcessor::setBinarizationEnabled(bool newBinarizationEnabled) {
     m_binarizationEnabled = newBinarizationEnabled;
     processImage();
     emit binarizationEnabledChanged();
+}
+
+int ImageProcessor::brightnessValue() const {
+    return m_brightnessValue;
+}
+
+void ImageProcessor::setBrightnessValue(int newBrightnessValue) {
+    if (m_brightnessValue == newBrightnessValue)
+        return;
+    m_brightnessValue = newBrightnessValue;
+    processImage();
+    emit brightnessValueChanged();
+}
+
+bool ImageProcessor::brightnessEnabled() const {
+    return m_brightnessEnabled;
+}
+
+void ImageProcessor::setBrightnessEnabled(bool newBrightnessEnabled) {
+    if (m_brightnessEnabled == newBrightnessEnabled)
+        return;
+    m_brightnessEnabled = newBrightnessEnabled;
+    processImage();
+    emit brightnessEnabledChanged();
+}
+
+bool ImageProcessor::outlineEdgesEnabled() const {
+    return m_outlineEdgesEnabled;
+}
+
+void ImageProcessor::setOutlineEdgesEnabled(bool newOutlineEdgesEnabled) {
+    if (m_outlineEdgesEnabled == newOutlineEdgesEnabled)
+        return;
+    m_outlineEdgesEnabled = newOutlineEdgesEnabled;
+    processImage();
+    emit outlineEdgesEnabledChanged();
 }

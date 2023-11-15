@@ -55,21 +55,37 @@ Window {
     }
 
     ImageProcessingStep {
-        id: contrastStep
+        id: brightnessStep
 
         anchors.top: binarizationStep.top
         anchors.left: originalImage.right
         anchors.margins: 20
         anchors.topMargin: 50
 
-        stepFrom: 10
-        stepTo: 20
+        stepFrom: 0
+        stepTo: 255
 
-        stepName: "Contrast enhance:"
+        stepName: "Increase brightness:"
+    }
+
+    BasicImageProcessingStep {
+        id: outlineStep
+
+        anchors.top: brightnessStep.bottom
+        anchors.left: originalImage.right
+        anchors.margins: 20
+        anchors.topMargin: 50
+
+        stepName: "Outline edges:"
     }
 
     Component.onCompleted: {
-        processor.binarizationEnabled = Qt.binding(function() { return  binarizationStep.stepEnabled })
+        processor.binarizationEnabled = Qt.binding(function() { return binarizationStep.stepEnabled })
         processor.binarizationThreshold = Qt.binding(function() { return binarizationStep.stepValue })
+
+        processor.brightnessEnabled = Qt.binding(function() { return brightnessStep.stepEnabled })
+        processor.brightnessValue = Qt.binding(function() { return brightnessStep.stepValue })
+
+        processor.outlineEdgesEnabled = Qt.binding(function() { return outlineStep.stepEnabled })
     }
 }

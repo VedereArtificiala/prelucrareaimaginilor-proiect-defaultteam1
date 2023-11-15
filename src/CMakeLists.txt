@@ -20,7 +20,7 @@ qt_add_executable(appPI_P_App
 qt_add_qml_module(appPI_P_App
     URI PI_P_App
     VERSION 1.0
-    QML_FILES main.qml ImageProcessingStep.qml
+    QML_FILES main.qml ImageProcessingStep.qml BasicImageProcessingStep.qml
 )
 
 set_target_properties(appPI_P_App PROPERTIES

@@ -20,7 +20,13 @@
 #define ERROR_MISSING_FILE	 1
 #define ERROR_OPENING_FILE	 nullptr;
 //...///
+const unsigned int MODE_ARITMETIC = 1;
+const unsigned int MODE_GAUSS = 2;
+const unsigned short filterWidth_1 = 3;
+const unsigned short filterHeight_1 = 3;
 
+const unsigned short filterWidth_2 = 9;
+const unsigned short filterHeight_2 = 9;
 
 //====================================================================================================
 //Data types 

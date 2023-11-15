@@ -3,53 +3,31 @@
 using namespace std;
 using namespace ImageProcessing;
 
-/*========================================================================================================================
- * This function recieves an array of pixels from an image, the width and the height of the image and returns
- * an array of bytes containing the grayscale values of the pixels.	
- ========================================================================================================================*/
-BYTE* ImageProcessing::grayscale(BYTE* img, int w, int h) //TODO: FIX
-{
-	BYTE* result = new BYTE[w * h];
-	for (int y = 0; y < h; y++)
-		for (int x = 0; x < w; x++)
-		{
-			Pixel p;
-			p.red = img[(y * w + x) * 3];
-			p.green = img[(y * w + x) * 3 + 1];
-			p.blue = img[(y * w + x) * 3 + 2];
- 
-			/*make sure the values are in the range[0, 255]*/
-			int value = ((int)p.red + (int)p.green + (int)p.blue) / 3;
-			if(value < 0)
-				value = 0;
-			if(value > 255)
-				value = 255;
-
-			result[y * w + x] = (BYTE)( value );
-		}
-	return result;
-}
 
 /*========================================================================================================================
  * This function recieves an array of values from an image, the width and the height of the image and a threshold
  * to compare the values to. If the value is greater than the threshold, the value is set to 255, otherwise it is set to 0.
  ========================================================================================================================*/
-BYTE* ImageProcessing::binarize(BYTE* img, int w, int h, int threshold = GRAY)
+BYTE* ImageProcessing::binarize(const BYTE* img, int w, int h, BYTE* img_dest = NULL, int threshold = GRAY)
 {
-	BYTE* result = new BYTE[w * h];
+	if(img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
+
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
-            result[y * w + x] = img[y * w + x] > threshold ? 255 : 0;
-	return result;
+			img_dest[y * w + x] = img[y * w + x] > threshold ? 255 : 0;
+	return img_dest;
 }	
 
 /*========================================================================================================================
  * This function recieves an array of values from an image, the width and the height of the image and returns
  * an array of bytes containing the updated values of the pixels to blur the image.
  ========================================================================================================================*/
-BYTE* ImageProcessing::blur(BYTE* img, int w, int h) //TODO: Add a parameter to specify the blur intensity and range
+BYTE* ImageProcessing::blur(const BYTE* img, int w, int h, BYTE* img_dest) //TODO: Add a parameter to specify the blur intensity and range
 {
-	BYTE* result = new BYTE[w * h];
+	if(img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
+
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
 		{
@@ -69,67 +47,21 @@ BYTE* ImageProcessing::blur(BYTE* img, int w, int h) //TODO: Add a parameter to 
 						y1 = h - 1;
 					sum += (int)img[y1 * w + x1];
 				}
-			result[y * w + x] = sum / 9;
+			img_dest[y * w + x] = sum / 9;
 		}
-	return result;
+	return img_dest;
 }
 
 /*========================================================================================================================
- * This function recieves the path to the file, an array of pixels from an image, the width and the height of the image
- * and writes the image to the file.
- * RETURNS: true if the file could not be opened, false otherwise.
- ========================================================================================================================*/
-bool ImageProcessing::WriteJPGImage(const char* filename, Pixel* pixels, int width, int height) {
-	// Open the file.
-	ofstream file(filename, ios::binary);
-	if (!file.is_open()) {
-		cout << "Error opening file: " << filename << endl;
-		return true;
-	}
-
-	/* Write pixels [TBD] */
-	file.write((char*)pixels, width * height * sizeof(Pixel));
-
-	// Close the file.
-	file.close();
-	return ERROR_NO_ERROR;
-}
-
-/*========================================================================================================================
-* This function recieves the path to the file and returns an array with data and metadata from the image.
-========================================================================================================================*/
-Pixel* ImageProcessing::ReadJPGImage(const char* filename) {
-	/* Open the file. */
-	ifstream file(filename, ios::binary);
-	if (!file.is_open()) {
-		cout << "Error opening file: " << filename << endl;
-		return ERROR_OPENING_FILE;
-	}
-
-	/* Get the file size. */
-	long file_size = file.seekg(0, ios::end).tellg();
-	file.seekg(0, ios::beg);
-
-	// Allocate memory to store the image data.
-	Pixel* pixels = new Pixel[file_size];
-
-	// Read the image data into the memory.
-	file.read((char*)pixels, file_size);
-
-	// Close the file.
-	file.close();
-
-	return pixels;
-}
-
-/*========================================================================================================================
-* This function recieves an array of pixels from an image, the width and the height of the image and a value representing
+* This function recieves an array of pixels from an image, the width, an image dest and the height of the image and a value representing
 * the brightness of the image.
-* RETURNS: An array of updated values of the pixels.
+* RETURNS: An array of updated values of the pixels
 ========================================================================================================================*/
-BYTE* ImageProcessing::changeLuminosityImage(BYTE* img, int w, int h, int Brightness)
+BYTE* ImageProcessing::changeLuminosityImage(const BYTE* img, int w, int h, BYTE* img_dest, int Brightness)
 {
-	BYTE* result = new BYTE[w * h];
+	if(img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
+	
 	int temp_value = 0;
 
 
@@ -148,10 +80,10 @@ BYTE* ImageProcessing::changeLuminosityImage(BYTE* img, int w, int h, int Bright
                 temp_value = BLACK;
 			}
 
-			result[y * w + x] = (uint8_t)temp_value;
+			img_dest[y * w + x] = (uint8_t)temp_value;
 		}
 
-	return result;
+	return img_dest;
 }
 
 /*========================================================================================================================
@@ -159,11 +91,12 @@ BYTE* ImageProcessing::changeLuminosityImage(BYTE* img, int w, int h, int Bright
 * values of interest and an amplifier interval.
 * RETURNS: An array of updated values of the pixels.
 ========================================================================================================================*/
-BYTE* ImageProcessing::changeContrastImage(BYTE* img, int w, int h,
-	int threshold_left = 0, int threshold_right = 0xff,
-	float amp_left = 0, float amp_right = 255)
+BYTE* ImageProcessing::changeContrastImage(const BYTE* img, int w, int h, BYTE* img_dest,
+										int threshold_left, int threshold_right,
+										float amp_left, float amp_right )
 {
-	BYTE* result = new BYTE[w * h];
+	if (img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
 
 	/* fix thresholds */
 	if (threshold_left < 0)
@@ -219,30 +152,32 @@ BYTE* ImageProcessing::changeContrastImage(BYTE* img, int w, int h,
 			if (img[y * w + x] <= threshold_left)
 			{
 				temp = (float)(img[y * w + x]) * m;
-				result[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
+				img_dest[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
 			}
 			else if (img[y * w + x] > threshold_left && img[y * w + x] <= threshold_right)
 			{
 				temp = (float)n + amp_left;
-				result[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
+				img_dest[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
 			}
 			else if (img[y * w + x] > threshold_right)
 			{
 				temp = (float)n + amp_right;
-				result[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
+				img_dest[y * w + x] = (temp > 0xff) ? 0xff : (temp < 0) ? 0 : temp;
 			}
 		}
 
-	return result;
+	return img_dest;
 }
+
 /*========================================================================================================================
-* This function recieves an array of pixels from an image, the width and the height of the image, a threshold interval
-* and a boolean that specifies if the values outside the interval should be set to 0 or to the original value. 
-* RETURNS: An array of updated values of the pixels.
+* This function recieves an array of pixels from an image, the width and the height of the image, an image destination,
+* a threshold interval and a boolean that specifies if the values outside the interval should be set to 0 or to the original value. 
+* RETURNS: An array of updated values of the pixels if there is no image destination, otherwise it returns null and updates the image destination.
 * ========================================================================================================================*/
-BYTE* ImageProcessing::binarize_window(BYTE* img, int w, int h, BYTE threshold_LEFT , BYTE threshold_RIGHT , bool MakeIntervalBlack  )
+BYTE* ImageProcessing::binarize_window(const BYTE* img_source, int w, int h, BYTE* img_dest, BYTE threshold_LEFT, BYTE threshold_RIGHT, bool MakeIntervalBlack)
 {
-	BYTE* result = new BYTE[w * h];
+	if(img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
 	
 	if (threshold_LEFT > threshold_RIGHT)
 	{
@@ -254,10 +189,250 @@ BYTE* ImageProcessing::binarize_window(BYTE* img, int w, int h, BYTE threshold_L
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
 		{
-			if(img[y*w+x] >= threshold_LEFT && img[y*w+x] <= threshold_RIGHT)
-				result[y * w + x] = WHITE;
+			if(img_source[y*w+x] >= threshold_LEFT && img_source[y*w+x] <= threshold_RIGHT)
+				img_dest[y * w + x] = WHITE;
 			else
-				result[y * w + x] = MakeIntervalBlack?BLACK:img[y*w+x];
+				img_dest[y * w + x] = MakeIntervalBlack?BLACK: img_source[y*w+x];
 		} 
+	return img_dest;
+}
+
+/*========================================================================================================================
+* This function recieves two arrays, one containing the values of the pixels from an source image and one containing
+* the values of the pixels from a destination image, the width and the height of the images.
+* The function will create a new image inside destination image by adjusting the values of the histogram of the source.
+* ========================================================================================================================*/
+
+BYTE* ImageProcessing::getHistogram(const BYTE* img, int w, int h) {
+	BYTE* histogram = new BYTE[256];				//Values from 0 to 255, so there is no need to allocate more memory.
+	memset(histogram, 0, 256 * sizeof(BYTE));
+
+	for (size_t i = 0; i < w * h; i++) {	
+		histogram[img[i]]++;						//Increment the value of the histogram at the index of the value of the pixel.
+	}
+
+	return histogram;								//Return the histogram.
+}
+
+
+double* ImageProcessing::normalizeHistogram(BYTE* histogram, int size) { // size = height * width
+	double* r = new double[256];
+	memset(r, 0, 256 * sizeof(double));
+
+	for (int i = 0; i < 256; i++) {
+		r[i] = (double)histogram[i] / size;
+	}
+
+	return r;
+}
+
+BYTE* ImageProcessing::normalizeImage(BYTE* img, int w, int h, double* normHisto) {
+	BYTE* result = new BYTE[w * h];
+
+	for (int y = 0; y < h; y++)
+		for (int x = 0; x < w; x++) {
+			double sum = 0;
+			for (int i = 0; i < img[y * w + x]; i++) {
+				sum += normHisto[i];
+			}
+			int value = (int)(255 * sum);
+			BOUND(value, 0, 255);
+			result[y * w + x] = value;
+		}
+
 	return result;
+}
+
+BYTE* ImageProcessing::adaptiveNormalize(BYTE* img, int w, int h, int n) {
+	BYTE* result = new BYTE[w * h];
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			// TODO: Boundary checking for the small section!
+			BYTE* smallSection = (BYTE*)(img + (y - n / 2) * w + x - n / 2);
+
+			BYTE* smallHistogram = getHistogram(smallSection, n, n);
+			double* normalizedSmallHistogram = normalizeHistogram(smallHistogram, n * n);
+
+			double sum = 0;
+			for (int i = 0; i < img[y * w + x]; i++) {
+				sum += normalizedSmallHistogram[i];
+			}
+			int value = (int)(255 * sum);
+			BOUND(value, 0, 255);
+			result[y * w + x] = value;
+		}
+	}
+
+	return result;
+}
+/*========================================================================================================================
+* This function recieves an array of pixels from an image, the width and the height of the image and a destination image
+* and returns an array of updated values of the pixels with less noise based on the gaussian filter or median filter.
+* ========================================================================================================================*/
+BYTE* ImageProcessing::NoiseReduction(const BYTE* img, int w, int h, BYTE* img_dest, unsigned int Mode, unsigned short Filter_Size_X, unsigned short Filter_Size_Y)
+{
+	if(img_dest == NULL)
+		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
+
+	double* filter_main= 0;
+	if (Mode == MODE_ARITMETIC)												//if Artimetic mode was selected
+	{
+		filter_main = (double*)malloc(Filter_Size_X * Filter_Size_Y);		//allocate memory for the filter
+		if (!filter_main)													//if the memory allocation failed
+			return 0;														//return 0.
+
+		for (size_t i = 0; i < Filter_Size_X * Filter_Size_Y; i++)			//for each element of the filter
+		{
+			filter_main[i] = 1;												//set the value to 1
+		}
+	}
+	else if (Mode == MODE_GAUSS)											//if Gauss mode was selected	
+	{
+		double filter[5 * 5] = { 1 ,4 ,7 ,4 ,1 ,							//Set the filter to the values of the Gauss filter ( values found on internet :P)
+								4,16,26,16,4,
+								7,26,41,26,7,
+								4,16 ,26 ,16 ,4 ,
+								1,4 ,7,4,1
+		};
+		Filter_Size_X = 5;
+		Filter_Size_Y = 5;
+		filter_main = filter;
+	}
+
+
+	double sum1 = (Mode == MODE_ARITMETIC) ? Filter_Size_X * Filter_Size_Y : SUM_OF_THE_GAUSSIAN_FILTER; //if the mode is arithmetic, the sum is the number of elements in the filter, otherwise it is the sum of the values of the Gauss filter
+
+	for (int y = 1; y < h - 1; y++)
+	{
+		for (int x = 1; x < w - 1; x++)
+		{
+			double sum = 0;
+			for (size_t fy = 0; fy < Filter_Size_Y; ++fy)
+			{
+				for (size_t fx = 0; fx < Filter_Size_X; ++fx)
+				{
+					sum += img[(y - 1 + fy) * w + (x - 1 + fx)] * filter_main[fy * Filter_Size_X + fx];
+				}
+			}
+			img_dest[y * w + x] = sum / sum1;
+		}
+	}
+
+	return img_dest;
+}
+
+/*========================================================================================================================
+* This function recieves an array of pixels from an image, the width and the height of the image and a destination image
+* and it lets you apply a filter to the image defined by the developer.
+* ========================================================================================================================*/
+BYTE* ImageProcessing::ApplyFilter(const BYTE* img, int iw, int ih, double* filtru, int fs, BYTE* img_dest) {
+	if(img_dest == NULL)
+		img_dest = new BYTE[iw * ih]; //If there is no image destination, create one.)
+	
+
+	for (int y = 0; y < ih; y++) {
+		for (int x = 0; x < iw; x++) {
+			double sum = 0;
+
+			for (int i = -fs / 2; i <= fs / 2; i++) {
+				for (int j = -fs / 2; j <= fs / 2; j++) {
+					if (((y + i) * iw + x + j) >= 0 && ((y + i) * iw + x + j) < iw * ih)
+						sum += img[(y + i) * iw + x + j] * filtru[(i + fs / 2) * fs + j + fs / 2];
+				}
+			}
+
+			if (sum > 255) {
+				img_dest[y * iw + x] = 255;
+			}
+			else if (sum < 0) {
+				img_dest[y * iw + x] = 0;
+			}
+			else {
+				img_dest[y * iw + x] = sum;
+			}
+
+		}
+	}
+
+	return img_dest;
+}
+
+double ImageProcessing::get_filter_sum(double* filter, size_t x, size_t y)
+{
+	if (filter == (void*)0)
+	{
+		return 1;
+	}
+	double sum = 0;
+	for (size_t fy = 0; fy < y; fy = fy + 1)
+	{
+		for (size_t fx = 0; fx < x; fx++)
+		{
+			sum += filter[fy * y + fx];
+		}
+	}
+	return sum;
+}
+/*========================================================================================================================
+* This function recieves an array of pixels from an image, the width and the height of the image and a destination image:
+* Returns an array of updated values of the pixels , with the image being outlined using the Sobel filter.
+* Values are updated in the destination image too.
+=========================================================================================================================*/
+BYTE* ImageProcessing::sobelOutline(const BYTE* img, int w, int h, BYTE*& img_dest) {
+	double filtruX[] = {
+		-1, 0, 1,
+		-2, 0, 2,
+		-1, 0, 1
+	};
+	if (img_dest)	//If there is a destination image
+		delete[] img_dest;
+	img_dest = ApplyFilter(img, w, h, filtruX, 3,NULL);
+
+	double filtruY[] = {
+		-1, -2, -1,
+		0, 0, 0,
+		1, 2, 1
+	};
+
+	BYTE* rezY = ApplyFilter(img, w, h, filtruY, 3,NULL);
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			img_dest[y * w + x] += rezY[y * w + x];
+		}
+	}
+	delete[] rezY;
+
+	return img_dest;
+}
+
+BYTE* ImageProcessing::prewittOutline(const BYTE* img, int w, int h, BYTE*& img_dest) {
+	double filtruX[] = {
+		-1, 0, 1,
+		-1, 0, 1,
+		-1, 0, 1
+	};
+
+	if (img_dest)	//If there is a destination image
+		delete[] img_dest;
+	img_dest = ApplyFilter(img, w, h, filtruX, 3, NULL);
+
+	double filtruY[] = {
+		-1, -1, -1,
+		0, 0, 0,
+		1, 1, 1
+	};
+
+	BYTE* rezY = ApplyFilter(img, w, h, filtruY, 3, NULL);
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			img_dest[y * w + x] += rezY[y * w + x];
+		}
+	}
+
+	delete[] rezY;
+
+	return img_dest;
 }

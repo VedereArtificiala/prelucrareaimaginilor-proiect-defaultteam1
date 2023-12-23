@@ -4,7 +4,7 @@
 
 #include "customimage.h"
 #include "imageprocessor.h"
-
+#include "imageprocessingstep.h"
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 

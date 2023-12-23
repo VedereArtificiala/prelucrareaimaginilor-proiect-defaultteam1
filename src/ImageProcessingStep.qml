@@ -1,69 +1,78 @@
 import QtQuick 2.0
 import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     id: baseStep
 
-    property int stepValue
-    property bool stepEnabled
-
-    property int stepTo
-    property int stepFrom
-
     property string stepName
+    property var stepValues
+
+    Button {
+        id: deleteStepButton
+
+        text: "Delete"
+
+        anchors.left: parent.left
+        anchors.verticalCenter: stepValues.verticalCenter
+        anchors.margins: 20
+
+        onClicked: processor.steps.deleteStep(index)
+    }
 
     Text {
         id: stepTip
 
         text: stepName
 
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 10
+        anchors.left: deleteStepButton.right
+        anchors.verticalCenter: stepValues.verticalCenter
+        anchors.margins: 20
     }
 
-    CheckBox {
-        id: stepCheckbox
+    ListView {
+        id: stepValues
+
+        implicitHeight: contentItem.childrenRect.height
+
+        clip: true
 
         anchors.left: stepTip.right
-        anchors.verticalCenter: stepTip.verticalCenter
-        anchors.margins: 10
+        anchors.right: parent.right
+        anchors.top: parent.top
 
-        checked: baseStep.stepEnabled
-    }
+        model: baseStep.stepValues
 
-    Slider {
-        id: stepSlider
+        delegate: RowLayout {
+            width: parent.width
 
-        width: 300
+            Slider {
+                id: stepValueSlider
 
-        anchors.left: stepCheckbox.right
-        anchors.verticalCenter: stepTip.verticalCenter
-        anchors.margins: 10
+                Layout.fillWidth: true
 
-        enabled: baseStep.stepEnabled
+                from: modelData.minValue
+                value: modelData.currentValue
+                to: modelData.maxValue
+                stepSize: 1.0
 
-        from: baseStep.stepFrom
-        value: baseStep.stepValue
-        to: baseStep.stepTo
-        stepSize: 1.0
-    }
+                onValueChanged: {
+                    modelData.currentValue = value
+                    processor.processImage()
+                }
+            }
 
-    Text {
-        id: stepValueBox
+            Text {
+                id: stepValueTextBox
 
-        anchors.left: stepSlider.right
-        anchors.verticalCenter: stepTip.verticalCenter
-        anchors.margins: 10
+                text: modelData.currentValue
+            }
 
-        text: baseStep.stepValue
-    }
+            Text {
+                id: stepValueName
 
-    Binding {
-        baseStep.stepEnabled: stepCheckbox.checked
-    }
-
-    Binding {
-        baseStep.stepValue: stepSlider.value
+                text: modelData.name
+            }
+        }
     }
 }

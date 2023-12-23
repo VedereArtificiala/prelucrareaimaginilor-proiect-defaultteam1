@@ -41,7 +41,7 @@ struct Pixel {
 
 BYTE*		binarize(const BYTE* img, int w, int h, BYTE*& img_dest, int threshold);
 
-BYTE*		binarize_window(const BYTE* img, int w, int h, BYTE* img_dest = NULL, BYTE threshold_LEFT = BLACK, BYTE threshold_RIGHT = WHITE, bool MakeIntervalBlack = true);
+BYTE*		binarize_window(const BYTE* img, int w, int h, BYTE*& img_dest, BYTE threshold_LEFT = BLACK, BYTE threshold_RIGHT = WHITE, bool MakeIntervalBlack = true);
 
 BYTE*		blur(const BYTE* img, int w, int h, BYTE* img_dest = NULL);
 

@@ -174,25 +174,21 @@ BYTE* ImageProcessing::changeContrastImage(const BYTE* img, int w, int h, BYTE* 
 * a threshold interval and a boolean that specifies if the values outside the interval should be set to 0 or to the original value. 
 * RETURNS: An array of updated values of the pixels if there is no image destination, otherwise it returns null and updates the image destination.
 * ========================================================================================================================*/
-BYTE* ImageProcessing::binarize_window(const BYTE* img_source, int w, int h, BYTE* img_dest, BYTE threshold_LEFT, BYTE threshold_RIGHT, bool MakeIntervalBlack)
+BYTE* ImageProcessing::binarize_window(const BYTE* img_source, int w, int h, BYTE*& img_dest, BYTE threshold_LEFT, BYTE threshold_RIGHT, bool MakeIntervalBlack)
 {
 	if(img_dest == NULL)
 		img_dest = new BYTE[w * h]; //If there is no image destination, create one.
 	
 	if (threshold_LEFT > threshold_RIGHT)
-	{
-		BYTE temp = threshold_LEFT;
-		threshold_LEFT = threshold_RIGHT;
-		threshold_RIGHT = temp;
-	}
+        swap(threshold_LEFT, threshold_RIGHT);
 
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
 		{
 			if(img_source[y*w+x] >= threshold_LEFT && img_source[y*w+x] <= threshold_RIGHT)
-				img_dest[y * w + x] = WHITE;
+                img_dest[y * w + x] = MakeIntervalBlack?BLACK: img_source[y*w+x];
 			else
-				img_dest[y * w + x] = MakeIntervalBlack?BLACK: img_source[y*w+x];
+                img_dest[y * w + x] = WHITE;
 		} 
 	return img_dest;
 }

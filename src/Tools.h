@@ -20,7 +20,7 @@ public:
 
     static QImage imageGray8FromArray(unsigned char* bytes, int w, int h)
 	{
-        QImage img = QImage(bytes, w, h, w, QImage::Format_Indexed8);
+        QImage img = QImage(bytes, w, h, w, QImage::Format_Indexed8).copy();
         img.setColorTable(grayLUT);
 		return img;
 	}

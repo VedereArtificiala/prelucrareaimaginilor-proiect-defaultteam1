@@ -3,15 +3,28 @@
 #include "Image_Processing.h"
 
 ImageProcessor::ImageProcessor(QObject *parent): QObject{parent} {
-    m_provider = new ImageProvider("/Users/tudor/Desktop/testcellsegm.jpg");
+    m_provider = new ImageProvider("/Users/tudor/Desktop/test.jpg");
+    m_steps = new ImageProcessingList();
 }
 
 ImageProcessor::~ImageProcessor() {
     delete m_provider;
+    delete m_steps;
 }
 
 ImageProvider *ImageProcessor::provider() {
     return m_provider;
+}
+
+ImageProcessingList *ImageProcessor::steps() const {
+    return m_steps;
+}
+
+void ImageProcessor::setSteps(ImageProcessingList *newSteps) {
+    if (m_steps == newSteps)
+        return;
+    m_steps = newSteps;
+    emit stepsChanged();
 }
 
 void ImageProcessor::processImage() {
@@ -23,18 +36,8 @@ void ImageProcessor::processImage() {
 
     src = Tools::readImageGray8(m_provider->originalImage());
 
-    if ( m_binarizationEnabled ) {
-        ImageProcessing::binarize(src, w, h, dest, m_binarizationThreshold);
-        swap(src, dest);
-    }
-
-    if ( m_brightnessEnabled ) {
-        ImageProcessing::changeLuminosityImage(src, w, h, dest, m_brightnessValue);
-        swap(src, dest);
-    }
-
-    if ( m_outlineEdgesEnabled ) {
-        ImageProcessing::sobelOutline(src, w, h, dest);
+    for ( int i = 0; i < m_steps->length(); i++ ) {
+        m_steps->at(i)->applyProcessing(src, dest, w, h);
         swap(src, dest);
     }
 
@@ -46,64 +49,4 @@ void ImageProcessor::processImage() {
 
     if ( dest )
         delete[] dest;
-}
-
-int ImageProcessor::binarizationThreshold() const {
-    return m_binarizationThreshold;
-}
-
-void ImageProcessor::setBinarizationThreshold(int newBinarizationThreshold) {
-    if (m_binarizationThreshold == newBinarizationThreshold)
-        return;
-    m_binarizationThreshold = newBinarizationThreshold;
-    processImage();
-    emit binarizationThresholdChanged();
-}
-
-bool ImageProcessor::binarizationEnable() const {
-    return m_binarizationEnabled;
-}
-
-void ImageProcessor::setBinarizationEnabled(bool newBinarizationEnabled) {
-    if (m_binarizationEnabled == newBinarizationEnabled)
-        return;
-    m_binarizationEnabled = newBinarizationEnabled;
-    processImage();
-    emit binarizationEnabledChanged();
-}
-
-int ImageProcessor::brightnessValue() const {
-    return m_brightnessValue;
-}
-
-void ImageProcessor::setBrightnessValue(int newBrightnessValue) {
-    if (m_brightnessValue == newBrightnessValue)
-        return;
-    m_brightnessValue = newBrightnessValue;
-    processImage();
-    emit brightnessValueChanged();
-}
-
-bool ImageProcessor::brightnessEnabled() const {
-    return m_brightnessEnabled;
-}
-
-void ImageProcessor::setBrightnessEnabled(bool newBrightnessEnabled) {
-    if (m_brightnessEnabled == newBrightnessEnabled)
-        return;
-    m_brightnessEnabled = newBrightnessEnabled;
-    processImage();
-    emit brightnessEnabledChanged();
-}
-
-bool ImageProcessor::outlineEdgesEnabled() const {
-    return m_outlineEdgesEnabled;
-}
-
-void ImageProcessor::setOutlineEdgesEnabled(bool newOutlineEdgesEnabled) {
-    if (m_outlineEdgesEnabled == newOutlineEdgesEnabled)
-        return;
-    m_outlineEdgesEnabled = newOutlineEdgesEnabled;
-    processImage();
-    emit outlineEdgesEnabledChanged();
 }

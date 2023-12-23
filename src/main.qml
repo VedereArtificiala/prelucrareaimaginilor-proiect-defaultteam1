@@ -4,11 +4,13 @@ import QtQuick.Controls
 import PI.Image
 
 Window {
+    id: rootWindow
+
     width: 900
     height: 700
+
     maximumHeight: height
     maximumWidth: width
-
     minimumHeight: height
     minimumWidth: width
 
@@ -41,51 +43,55 @@ Window {
         anchors.margins: 20
     }
 
-    ImageProcessingStep {
-        id: binarizationStep
+    Button {
+        id: addStepButton
+
+        text: "Add new step"
 
         anchors.top: parent.top
-        anchors.left: originalImage.right
-        anchors.margins: 20
+        anchors.right: parent.right
 
-        stepFrom: 0
-        stepTo: 255
+        onClicked: addStepMenu.open()
 
-        stepName: "Binarize Threshold:"
+        Menu {
+            id: addStepMenu
+            x: rootWindow.width - width
+            y: addStepButton.y + addStepButton.height
+            transformOrigin: Menu.TopRight
+
+            Action {
+                text: "Binarization"
+                onTriggered: processor.steps.addStep("bin")
+            }
+
+            Action {
+                text: "Window Binarization"
+                onTriggered: processor.steps.addStep("winbin")
+            }
+        }
     }
 
-    ImageProcessingStep {
-        id: brightnessStep
+    ListView {
+        id: stepsList
 
-        anchors.top: binarizationStep.top
+        clip: true
+
+        anchors.top: addStepButton.bottom
+        anchors.bottom: parent.bottom
         anchors.left: originalImage.right
+        anchors.right: parent.right
         anchors.margins: 20
-        anchors.topMargin: 50
 
-        stepFrom: 0
-        stepTo: 255
+        model: processor.steps
 
-        stepName: "Increase brightness:"
-    }
+        delegate: ImageProcessingStep {
+            width: stepsList.width
+            height: 30 * model.display.values.length
 
-    BasicImageProcessingStep {
-        id: outlineStep
+            stepName: model.display.name
+            stepValues: model.display.values
+        }
 
-        anchors.top: brightnessStep.bottom
-        anchors.left: originalImage.right
-        anchors.margins: 20
-        anchors.topMargin: 50
-
-        stepName: "Outline edges:"
-    }
-
-    Component.onCompleted: {
-        processor.binarizationEnabled = Qt.binding(function() { return binarizationStep.stepEnabled })
-        processor.binarizationThreshold = Qt.binding(function() { return binarizationStep.stepValue })
-
-        processor.brightnessEnabled = Qt.binding(function() { return brightnessStep.stepEnabled })
-        processor.brightnessValue = Qt.binding(function() { return brightnessStep.stepValue })
-
-        processor.outlineEdgesEnabled = Qt.binding(function() { return outlineStep.stepEnabled })
+        onCountChanged: processor.processImage()
     }
 }

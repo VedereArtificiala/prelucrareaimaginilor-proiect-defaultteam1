@@ -15,12 +15,17 @@ qt_add_executable(appPI_P_App
     Image_Processing_Cfg.h
     Image_Processing.h Image_Processing.cpp
     imageprocessor.h imageprocessor.cpp
+    imageprocessingstep.h imageprocessingstep.cpp
+    imageprocessingstepvalue.h imageprocessingstepvalue.cpp
+    imageprocessinglist.h imageprocessinglist.cpp
+    windowbinarizationstep.h windowbinarizationstep.cpp
+    binarizationstep.h binarizationstep.cpp
 )
 
 qt_add_qml_module(appPI_P_App
     URI PI_P_App
     VERSION 1.0
-    QML_FILES main.qml ImageProcessingStep.qml BasicImageProcessingStep.qml
+    QML_FILES main.qml ImageProcessingStep.qml
 )
 
 set_target_properties(appPI_P_App PROPERTIES

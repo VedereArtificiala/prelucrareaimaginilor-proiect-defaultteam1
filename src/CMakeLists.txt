@@ -4,8 +4,12 @@ project(PI_P_App VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(OpenCV_DIR /usr/local/Cellar/opencv/4.8.1_4/lib/cmake/opencv4)
 
+find_package( OpenCV REQUIRED )
 find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
+
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 qt_add_executable(appPI_P_App
     main.cpp
@@ -39,4 +43,4 @@ set_target_properties(appPI_P_App PROPERTIES
 target_compile_definitions(appPI_P_App
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(appPI_P_App
-    PRIVATE Qt6::Quick)
+    PRIVATE ${OpenCV_LIBS} Qt6::Quick)

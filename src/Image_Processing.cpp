@@ -582,15 +582,11 @@ cv::Mat ImageProcessing::DeleteSmallArtifacts(const cv::Mat& matSRC, cv::Mat& ma
 	return matDEST;
 }
 
-void ImageProcessing::processBinaryImage(const cv::Mat& binary_src, cv::Mat& dest, double min_contour_area) {
-	// Erode and dilate to remove small artifacts
-	cv::Mat eroded, dilated;
-	cv::erode(binary_src, eroded, cv::Mat(), cv::Point(-1, -1), 2);
-	cv::dilate(eroded, dilated, cv::Mat(), cv::Point(-1, -1), 2);
-
+void ImageProcessing::processBinaryImage(const cv::Mat& matSRC, cv::Mat& matDEST, double min_contour_area) 
+{
 	// Find contours
 	std::vector<std::vector<cv::Point>> contours;
-	cv::findContours(dilated, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+	cv::findContours(matSRC, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
 	// Filter contours by area
 	std::vector<std::vector<cv::Point>> filtered_contours;
@@ -600,9 +596,9 @@ void ImageProcessing::processBinaryImage(const cv::Mat& binary_src, cv::Mat& des
 		}
 	}
 
-	// Further filter by circularity or aspect ratio if needed
+	// Further filter by circularity or aspect ratio if needed (TODO LATER)
 
 	// Draw contours on the destination image
-	cv::cvtColor(binary_src, dest, cv::COLOR_GRAY2BGR);  // Convert to BGR for drawing contours
-	cv::drawContours(dest, filtered_contours, -1, cv::Scalar(0, 255, 0), 2);
+	cv::cvtColor(matSRC, matDEST, cv::COLOR_GRAY2BGR);  // Convert to BGR for drawing contours
+	cv::drawContours(matDEST, filtered_contours, -1, cv::Scalar(0, 255, 0), 2);
 }

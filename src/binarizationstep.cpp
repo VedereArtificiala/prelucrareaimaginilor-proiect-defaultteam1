@@ -1,5 +1,6 @@
 #include "binarizationstep.h"
 #include "Image_Processing.h"
+
 BinarizationStep::BinarizationStep(QObject *parent): ImageProcessingStep{parent} {
     m_name = "Binarization";
 
@@ -11,5 +12,5 @@ BinarizationStep::BinarizationStep(QObject *parent): ImageProcessingStep{parent}
 }
 
 void BinarizationStep::applyProcessing(unsigned char *src, unsigned char *&dest, int w, int h) {
-    ImageProcessing::binarize(src, w, h, dest, threshold.getCurrentValue());
+    ImageProcessing::binarize(src, dest, w, h, threshold.getCurrentValue());
 }

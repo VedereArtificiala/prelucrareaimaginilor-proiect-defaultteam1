@@ -6,7 +6,7 @@ import PI.Image
 Window {
     id: rootWindow
 
-    width: 900
+    width: 1000
     height: 700
 
     maximumHeight: height
@@ -68,6 +68,31 @@ Window {
                 text: "Window Binarization"
                 onTriggered: processor.steps.addStep("winbin")
             }
+
+            Action {
+                text: "Blur"
+                onTriggered: processor.steps.addStep("blur")
+            }
+
+            Action {
+                text: "Change Luminosity"
+                onTriggered: processor.steps.addStep("luminosity")
+            }
+
+            Action {
+                text: "Normalize"
+                onTriggered: processor.steps.addStep("norm")
+            }
+
+            Action {
+                text: "Noise Reduction"
+                onTriggered: processor.steps.addStep("noisered")
+            }
+
+            Action {
+                text: "Morphological Operations"
+                onTriggered: processor.steps.addStep("morphologic")
+            }
         }
     }
 
@@ -86,7 +111,7 @@ Window {
 
         delegate: ImageProcessingStep {
             width: stepsList.width
-            height: 30 * model.display.values.length
+            height: 30 * model.display.values.length + 30
 
             stepName: model.display.name
             stepValues: model.display.values

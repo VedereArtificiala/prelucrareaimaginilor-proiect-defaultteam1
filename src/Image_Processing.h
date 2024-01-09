@@ -49,7 +49,7 @@ BYTE*   changeLuminosityImage(BYTE* src, BYTE*& dest, int w, int h, int Brightne
 BYTE*   NoiseReduction(BYTE* src, BYTE*& dest, int w, int h, unsigned int Mode = MODE_ARITMETIC, unsigned short Filter_Size_X = filterHeight_1, unsigned short Filter_Size_Y = filterHeight_1, unsigned int iterations = 1);
 BYTE*   getHistogram(BYTE* src, BYTE*& dest, int w, int h);
 BYTE*   normalizeImage(BYTE* src, BYTE*& dest, int w, int h);
-BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int Iterations);
+//BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int Iterations); // Better version below?
 BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int IterationsErode, unsigned int IterationDilate);
 void    processBinaryImage(BYTE* binary_src, BYTE*& dest, int w, int h, double min_contour_area = 100.0);
 //BYTE* ImageProcessing::RegionGrowing(BYTE* src, BYTE*& matDEST, int threshold, int x, int y);

@@ -9,7 +9,7 @@ BYTE*   ImageProcessing::blur(BYTE *src, BYTE *&dest, int w, int h, int kernel_s
 
     // OpenCV...
 	cv::blur(matSRC, matDEST, cv::Size(kernel_size, kernel_size));
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -26,7 +26,7 @@ BYTE*   ImageProcessing::binarize(BYTE* src, BYTE*& dest, int w, int h, int thre
 
     // OpenCV...
 	cv::threshold(matSRC, matDEST, threshold, 255, cv::THRESH_BINARY);
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -45,7 +45,7 @@ BYTE*   ImageProcessing::binarize_window(BYTE* src, BYTE*& dest, int w, int h, i
     cv::inRange(matSRC, threshold_LEFT, threshold_RIGHT, matDEST);
 	if(inverse)
 		cv::bitwise_not(matDEST, matDEST);
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -62,7 +62,7 @@ BYTE*   ImageProcessing::changeLuminosityImage(BYTE* src, BYTE*& dest, int w, in
 
     // OpenCV...
 	matDEST = matSRC + Brightness;
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -85,7 +85,7 @@ BYTE*   ImageProcessing::getHistogram(BYTE* src, BYTE*& dest, int w, int h)
 	bool uniform = true, accumulate = false;
 
 	cv::calcHist(&matSRC, 1, 0, cv::Mat(), matDEST, 1, &histSize, &histRange, uniform, accumulate);
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -103,7 +103,7 @@ BYTE*   ImageProcessing::normalizeImage(BYTE* src, BYTE*& dest, int w, int h)
 
     // OpenCV...
 	cv::equalizeHist(matSRC, matDEST);
-    // OpenCV...
+    // ...OpenCV
 
     if ( dest )
         delete[] dest;
@@ -152,7 +152,7 @@ BYTE*   ImageProcessing::NoiseReduction(BYTE* src, BYTE*& dest, int w, int h, un
 }
 
 //Delete Small Artficats
-BYTE*   ImageProcessing::DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int Iterations)
+BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int Iterations)
 {
     cv::Mat matSRC = cv::Mat(h, w, CV_8UC1, src);
     cv::Mat matDEST = cv::Mat(matSRC.rows, matSRC.cols, CV_8UC1);

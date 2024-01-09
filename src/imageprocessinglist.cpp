@@ -2,6 +2,11 @@
 
 #include "windowbinarizationstep.h"
 #include "binarizationstep.h"
+#include "blurstep.h"
+#include "luminositystep.h"
+#include "normalizationstep.h"
+#include "noisereductionstep.h"
+#include "morphologicalstep.h"
 
 ImageProcessingList::ImageProcessingList(QObject *parent): QAbstractListModel{parent} {
 }
@@ -46,6 +51,16 @@ void ImageProcessingList::addStep(QString type) {
         m_steps.append(new WindowBinarizationStep());
     } else if ( type == "bin" ) {
         m_steps.append(new BinarizationStep());
+    }  else if ( type == "blur" ) {
+        m_steps.append(new BlurStep());
+    } else if ( type == "luminosity" ) {
+        m_steps.append(new LuminosityStep());
+    } else if ( type == "norm" ) {
+        m_steps.append(new NormalizationStep());
+    } else if ( type == "noisered" ) {
+        m_steps.append(new NoiseReductionStep());
+    } else if ( type == "morphologic" ) {
+        m_steps.append(new MorphologicalStep());
     }
 
     endInsertRows();

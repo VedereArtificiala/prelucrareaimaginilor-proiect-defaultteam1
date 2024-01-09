@@ -24,6 +24,11 @@ qt_add_executable(appPI_P_App
     imageprocessinglist.h imageprocessinglist.cpp
     windowbinarizationstep.h windowbinarizationstep.cpp
     binarizationstep.h binarizationstep.cpp
+    blurstep.h blurstep.cpp
+    luminositystep.h luminositystep.cpp
+    normalizationstep.h normalizationstep.cpp
+    noisereductionstep.h noisereductionstep.cpp
+    morphologicalstep.h morphologicalstep.cpp
 )
 
 qt_add_qml_module(appPI_P_App

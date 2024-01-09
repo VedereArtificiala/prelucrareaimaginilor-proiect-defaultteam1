@@ -40,6 +40,7 @@ Item {
         anchors.left: stepTip.right
         anchors.right: parent.right
         anchors.top: parent.top
+        anchors.margins: 15
 
         model: baseStep.stepValues
 

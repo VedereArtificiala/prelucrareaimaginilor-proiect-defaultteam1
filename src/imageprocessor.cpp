@@ -41,12 +41,40 @@ void ImageProcessor::processImage() {
         swap(src, dest);
     }
 
-    QImage finalImage = Tools::imageGray8FromArray(src, w, h);
-    m_provider->setFinalImage(finalImage);
+    if ( m_askedForDiagnosis ) {
+        //TODO: Call calculateDiagnosis() here
+        //      Use the last processed image here aka `src`
+
+        m_provider->setFinalImage(QImage()); // TODO: use finalImage from diagnosisResult resulted from calculateDiagnosis
+    } else
+        m_provider->setFinalImage(Tools::imageGray8FromArray(src, w, h));
 
     if ( src )
         delete[] src;
 
     if ( dest )
         delete[] dest;
+}
+
+void ImageProcessor::calculateDiagnosis(unsigned char *src, int w, int h) {
+}
+
+bool ImageProcessor::askedForDiagnosis() const {
+    return m_askedForDiagnosis;
+}
+
+void ImageProcessor::setAskedForDiagnosis(bool newAskedForDiagnosis) {
+    if (m_askedForDiagnosis == newAskedForDiagnosis)
+        return;
+    m_askedForDiagnosis = newAskedForDiagnosis;
+    emit askedForDiagnosisChanged();
+}
+
+const DiagnosisResult &ImageProcessor::diagnosisResult() const {
+    return m_diagnosisResult;
+}
+
+void ImageProcessor::setDiagnosisResult(const DiagnosisResult &newDiagnosis) {
+    m_diagnosisResult = newDiagnosis;
+    emit diagnosisResultChanged();
 }

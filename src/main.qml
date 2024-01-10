@@ -43,6 +43,23 @@ Window {
         anchors.margins: 20
     }
 
+    CheckBox {
+        id: calculateDiagnosisCheckbox
+
+        text: "Calculate Diagnosis"
+        checked: processor.askedForDiagnosis
+        visible:stepsList.count > 0
+
+        anchors.top: parent.top
+        anchors.right: addStepButton.left
+        anchors.margins: 20
+
+        onCheckedChanged: {
+            processor.askedForDiagnosis = checked;
+            processor.processImage()
+        }
+    }
+
     Button {
         id: addStepButton
 
@@ -102,7 +119,7 @@ Window {
         clip: true
 
         anchors.top: addStepButton.bottom
-        anchors.bottom: parent.bottom
+        anchors.bottom: diagnosisResultText.top
         anchors.left: originalImage.right
         anchors.right: parent.right
         anchors.margins: 20
@@ -118,5 +135,22 @@ Window {
         }
 
         onCountChanged: processor.processImage()
+    }
+
+    Text {
+        id: diagnosisResultText
+
+        anchors.bottom:parent.bottom
+        anchors.left: finalImage.right
+        anchors.right: parent.right
+        anchors.margins: 20
+        anchors.bottomMargin: 50
+
+        visible: processor.askedForDiagnosis
+
+        text: "Diagnosis Result: " + processor.diagnosisResult.result
+        horizontalAlignment: Text.AlignHCenter
+        font.bold: true
+        font.pointSize: 15
     }
 }

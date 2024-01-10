@@ -29,6 +29,7 @@ qt_add_executable(appPI_P_App
     normalizationstep.h normalizationstep.cpp
     noisereductionstep.h noisereductionstep.cpp
     morphologicalstep.h morphologicalstep.cpp
+    diagnosisresult.h
 )
 
 qt_add_qml_module(appPI_P_App

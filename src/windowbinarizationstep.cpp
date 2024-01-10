@@ -20,7 +20,6 @@ WindowBinarizationStep::WindowBinarizationStep(QObject *parent): ImageProcessing
 void WindowBinarizationStep::applyProcessing(unsigned char* src, unsigned char*& dest, int w, int h) {
     ImageProcessing::binarize_window(src, dest, w, h,
                                      m_thresholdLeft.getCurrentValue(),
-                                     m_thresholdRight.getCurrentValue(),
-                                     true
+                                     m_thresholdRight.getCurrentValue()
                                      );
 }

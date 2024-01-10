@@ -10,18 +10,19 @@ class Tools
 public:
     static unsigned char* readImageGray8(const QImage &img)
     {
-        int w = img.width();
-        int h = img.height();
+        QImage gray = img.convertToFormat(QImage::Format_Grayscale8);
+        int w = gray.width();
+        int h = gray.height();
 		unsigned char *pixelValues = new unsigned char[w*h];
 		for (int i = 0; i < h; i++)
-            memcpy(pixelValues + i*w, img.scanLine(i), w);
+            memcpy(pixelValues + i*w, gray.scanLine(i), w);
 		return pixelValues;
 	}
 
     static QImage imageGray8FromArray(unsigned char* bytes, int w, int h)
 	{
-        QImage img = QImage(bytes, w, h, w, QImage::Format_Indexed8).copy();
-        img.setColorTable(grayLUT);
+        QImage img = QImage(bytes, w, h, QImage::Format_Grayscale8).copy();
+//        img.setColorTable(grayLUT);
 		return img;
 	}
 

@@ -1,5 +1,7 @@
 #include "Image_Processing.h"
-#include <fstream>
+#include <numeric>
+#include <QImage>
+
 using namespace ImageProcessing;
 
 BYTE*   ImageProcessing::blur(BYTE *src, BYTE *&dest, int w, int h, int kernel_size)
@@ -205,18 +207,20 @@ BYTE*   ImageProcessing::DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int
 }
 
 
-double ImageProcessing::processBinaryImage(const cv::Mat& matSRC, cv::Mat& matDEST, double min_contour_area, double max_contour_area)
+double ImageProcessing::processBinaryImage(const cv::Mat& matSRC, QImage& dest, double min_contour_area, double max_contour_area)
 {
 	/* Find contours */
 #if DEBUG_MODE == 1
 	std::cout << "Number of channels: " << matSRC.channels() << std::endl;
 #endif
-	std::vector<std::vector<cv::Point>> contours;
+
+    std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(matSRC, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 	/* Filter contours by area */
 	std::vector<std::vector<cv::Point>> filtered_contours;
 	for (const auto& contour : contours) {
 		if (cv::contourArea(contour) > min_contour_area) {
+
 #if DEBUG_MODE == 1
 			std::cout << "Contour area: " << cv::contourArea(contour) << std::endl;
 #endif
@@ -224,14 +228,13 @@ double ImageProcessing::processBinaryImage(const cv::Mat& matSRC, cv::Mat& matDE
 		}
 	}
 
-	double total_area = 0.0;
-	matDEST = cv::Mat::zeros(matSRC.size(), CV_8UC3);
+    double fat_area = 0.0;
+    double total_area = matSRC.cols * matSRC.rows;
+    cv::Mat matDEST = cv::Mat::zeros(matSRC.size(), CV_8UC3);
 	cv::drawContours(matDEST, filtered_contours, -1, cv::Scalar(255, 255, 255), cv::FILLED);
 	cv::drawContours(matDEST, filtered_contours, -1, cv::Scalar(0, 255, 0), 2);
 	for (const auto& contour : filtered_contours) {
 		if (cv::contourArea(contour) < max_contour_area) {
-			total_area += cv::contourArea(contour);
-
 			// Calculate centroid
 			cv::Moments mu = cv::moments(contour, false);
 			cv::Point2d centroid(mu.m10 / mu.m00, mu.m01 / mu.m00);
@@ -239,20 +242,20 @@ double ImageProcessing::processBinaryImage(const cv::Mat& matSRC, cv::Mat& matDE
 			// For each centroid, check if the shape is a circle
 			if (rayTraceCentroids(matSRC, centroid, 100))
 			{
+                fat_area += cv::contourArea(contour);
 				cv::circle(matDEST, centroid, 5, cv::Scalar(0, 0, 255), -1); // Red circle for centroid
 			}
 			else {
+                total_area -= cv::contourArea(contour);
 				cv::circle(matDEST, centroid, 5, cv::Scalar(255, 0, 0), -1); // Blue circle for centroid
 			}
-
-			// Mark centroid on the destination image
-			//cv::circle(matDEST, centroid, 5, cv::Scalar(0, 0, 255), -1); // Red circle for centroid
 		}
 	}
 
-	
+    cvtColor(matDEST, matDEST, COLOR_BGR2RGB);
+    dest = QImage(matDEST.data, matDEST.cols, matDEST.rows, matDEST.step, QImage::Format_RGB888).copy();
 
-	return total_area;
+    return fat_area/total_area * 100;
 }
 
 

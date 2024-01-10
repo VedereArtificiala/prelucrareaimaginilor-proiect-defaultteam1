@@ -10,5 +10,5 @@ void CustomImage::setImage(const QImage &newImage) {
 }
 
 void CustomImage::paint(QPainter *painter) {
-    painter->drawImage(0, 0, m_image);
+    painter->drawImage(0, 0, m_image.scaled(300, 300));
 }

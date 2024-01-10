@@ -3,8 +3,8 @@
 ImageProvider::ImageProvider(QString path, QObject *parent): QObject{parent} {
     m_originalImagePath = path;
 
-    m_originalImage = QImage(path).scaled(300, 300);
-    m_finalImage = QImage(path).scaled(300, 300);
+    m_originalImage = QImage(path);
+    m_finalImage = QImage(path);
 }
 
 const QImage &ImageProvider::originalImage() const {

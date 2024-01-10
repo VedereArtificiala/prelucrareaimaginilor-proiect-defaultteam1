@@ -23,8 +23,8 @@ NoiseReductionStep::NoiseReductionStep(QObject *parent): ImageProcessingStep{par
     m_values.append(&m_filterSizeY);
 
     m_iterations.setName("Iterations");
-    m_iterations.setMinValue(1);
-    m_iterations.setMaxValue(10);
+    m_iterations.setMinValue(0);
+    m_iterations.setMaxValue(500);
     m_iterations.setCurrentValue(1);
     m_values.append(&m_iterations);
 }

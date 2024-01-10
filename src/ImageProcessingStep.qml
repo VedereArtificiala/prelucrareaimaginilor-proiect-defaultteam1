@@ -56,6 +56,7 @@ Item {
                 value: modelData.currentValue
                 to: modelData.maxValue
                 stepSize: 1.0
+                snapMode: Slider.SnapAlways;
 
                 onValueChanged: {
                     modelData.currentValue = value

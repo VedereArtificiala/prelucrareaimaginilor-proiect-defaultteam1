@@ -3,7 +3,7 @@
 #include "Image_Processing.h"
 
 ImageProcessor::ImageProcessor(QObject *parent): QObject{parent} {
-    m_provider = new ImageProvider("/Users/tudor/Desktop/test.jpg");
+    m_provider = new ImageProvider("/Users/tudor/Desktop/steatozahepatica/-1 FNP-LEB H-25471-08/-1 FNP-LEB H-25471-08_Region 011_FOV 01079.jpg");
     m_steps = new ImageProcessingList();
 }
 
@@ -42,10 +42,8 @@ void ImageProcessor::processImage() {
     }
 
     if ( m_askedForDiagnosis ) {
-        //TODO: Call calculateDiagnosis() here
-        //      Use the last processed image here aka `src`
-
-        m_provider->setFinalImage(QImage()); // TODO: use finalImage from diagnosisResult resulted from calculateDiagnosis
+        calculateDiagnosis(src, w, h);
+        m_provider->setFinalImage(m_diagnosisResult.finalImage); // TODO: use finalImage from diagnosisResult resulted from calculateDiagnosis
     } else
         m_provider->setFinalImage(Tools::imageGray8FromArray(src, w, h));
 
@@ -57,6 +55,9 @@ void ImageProcessor::processImage() {
 }
 
 void ImageProcessor::calculateDiagnosis(unsigned char *src, int w, int h) {
+    cv::Mat matSrc = cv::Mat(h, w, CV_8UC1, src);
+    m_diagnosisResult.result = ImageProcessing::processBinaryImage(matSrc, m_diagnosisResult.finalImage, 1500);
+    emit diagnosisResultChanged();
 }
 
 bool ImageProcessor::askedForDiagnosis() const {

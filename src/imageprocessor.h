@@ -65,7 +65,7 @@ private:
     ImageProcessingList *m_steps = nullptr;
 
     bool m_askedForDiagnosis = false;
-    DiagnosisResult m_diagnosisResult = {0.0, QImage()};
+    DiagnosisResult m_diagnosisResult = {69.420, QImage()};
 };
 
 #endif // IMAGEPROCESSOR_H

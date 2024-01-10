@@ -9,6 +9,7 @@
 //====================================================================================================
 
 #include "Image_Processing_Cfg.h"
+#include <QImage>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 using namespace cv;
@@ -51,8 +52,8 @@ BYTE*   getHistogram(BYTE* src, BYTE*& dest, int w, int h);
 BYTE*   normalizeImage(BYTE* src, BYTE*& dest, int w, int h);
 //BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int Iterations); // Better version below?
 BYTE*   DeleteSmallArtifacts(BYTE* src, BYTE*& dest, int w, int h, unsigned int IterationsErode, unsigned int IterationDilate);
-double		processBinaryImage(const cv::Mat& binary_src, cv::Mat& dest, double min_contour_area = 100.0, double max_contour_area=DBL_MAX);
-bool		rayTraceCentroids(const cv::Mat& matSRC, const cv::Point2d& centroid, const unsigned int N_Rays, double acceptable_deviation = 1e-6);
+double  processBinaryImage(const cv::Mat& matSRC, QImage& dest, double min_contour_area = 100.0, double max_contour_area = DBL_MAX);
+bool    rayTraceCentroids(const cv::Mat& matSRC, const cv::Point2d& centroid, const unsigned int N_Rays, double acceptable_deviation = 1e-6);
 //====================================================================================================
 //Global variables
 //====================================================================================================

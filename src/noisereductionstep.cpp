@@ -7,7 +7,7 @@ NoiseReductionStep::NoiseReductionStep(QObject *parent): ImageProcessingStep{par
     m_mode.setName("Mode: Aritm/Gauss");
     m_mode.setMinValue(0);
     m_mode.setMaxValue(1);
-    m_mode.setCurrentValue(0);
+    m_mode.setCurrentValue(1);
     m_values.append(&m_mode);
 
     m_filterSizeX.setName("Filter Size X");
@@ -25,7 +25,7 @@ NoiseReductionStep::NoiseReductionStep(QObject *parent): ImageProcessingStep{par
     m_iterations.setName("Iterations");
     m_iterations.setMinValue(0);
     m_iterations.setMaxValue(500);
-    m_iterations.setCurrentValue(1);
+    m_iterations.setCurrentValue(200);
     m_values.append(&m_iterations);
 }
 

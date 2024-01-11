@@ -3,8 +3,13 @@
 #include "Image_Processing.h"
 
 ImageProcessor::ImageProcessor(QObject *parent): QObject{parent} {
-    m_provider = new ImageProvider("/Users/tudor/Desktop/steatozahepatica/-1 FNP-LEB H-25471-08/-1 FNP-LEB H-25471-08_Region 011_FOV 01079.jpg");
+    m_provider = new ImageProvider("/Users/tudor/Desktop/steatozahepatica/-1 FNP-LEB H-25471-08/-1 FNP-LEB H-25471-08_Region 011_FOV 01073.jpg");
+
     m_steps = new ImageProcessingList();
+    m_steps->addStep("noisered");
+    m_steps->addStep("norm");
+    m_steps->addStep("luminosity");
+    m_steps->addStep("bin");
 }
 
 ImageProcessor::~ImageProcessor() {

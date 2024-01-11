@@ -148,7 +148,7 @@ Window {
 
         visible: processor.askedForDiagnosis
 
-        text: "Diagnosis Result: " + processor.diagnosisResult.result
+        text: "Diagnosis Result: " + processor.diagnosisResult.result + " (%)"
         horizontalAlignment: Text.AlignHCenter
         font.bold: true
         font.pointSize: 15

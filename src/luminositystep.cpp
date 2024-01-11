@@ -5,7 +5,7 @@ LuminosityStep::LuminosityStep(QObject *parent): ImageProcessingStep{parent} {
     m_name = "Luminosity";
 
     m_brightness.setName("Brightness");
-    m_brightness.setCurrentValue(0);
+    m_brightness.setCurrentValue(15);
     m_brightness.setMinValue(-255);
     m_brightness.setMaxValue(255);
     m_values.append(&m_brightness);

@@ -6,7 +6,7 @@ BinarizationStep::BinarizationStep(QObject *parent): ImageProcessingStep{parent}
 
     threshold.setName("Threhsold");
     threshold.setMinValue(0);
-    threshold.setCurrentValue(128);
+    threshold.setCurrentValue(230);
     threshold.setMaxValue(255);
     m_values.append(&threshold);
 }
